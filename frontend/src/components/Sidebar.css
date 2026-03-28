@@ -1,0 +1,168 @@
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 240px;
+  background: #0a0a0a;
+  border-right: 1px solid #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  z-index: 100;
+}
+
+/* Logo */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  margin-bottom: 36px;
+}
+
+.logo-icon {
+  font-size: 22px;
+  color: #a78bfa;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Nav */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.nav-item.active {
+  background: #1a1a2e;
+  color: #a78bfa;
+}
+
+.nav-icon {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.nav-indicator {
+  position: absolute;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a78bfa;
+}
+
+/* Bottom User */
+.sidebar-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #111;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-bottom:hover {
+  background: #1a1a1a;
+}
+
+.avatar {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-display-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-handle {
+  font-size: 11px;
+  color: #666;
+}
+
+.logout-btn {
+  border: none;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  color: #ef4444;
+  background: #1f1010;
+}
+
+/* Responsive - hide sidebar on mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}

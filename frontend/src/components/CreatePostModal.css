@@ -1,0 +1,369 @@
+/* ═══════════════════════════════════════════════
+   CREATE POST MODAL — Premium Dark UI
+   ═══════════════════════════════════════════════ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-container {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── HEADER ── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #252525;
+  gap: 8px;
+  min-height: 54px;
+}
+
+.modal-back {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.modal-back:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.modal-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f0f0f0;
+  text-align: center;
+  margin: 0;
+}
+
+.modal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.modal-next,
+.modal-share {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: opacity 0.15s, background 0.15s;
+  color: #4a9eff;
+}
+
+.modal-next:hover  { background: rgba(74,158,255,0.1); }
+.modal-share       { color: #4a9eff; }
+.modal-share:hover { background: rgba(74,158,255,0.1); }
+.modal-share:disabled { opacity: 0.5; cursor: default; }
+
+.modal-close {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+/* ── UPLOAD PROGRESS ── */
+.upload-progress-wrap {
+  height: 3px;
+  background: #2a2a2a;
+  overflow: hidden;
+}
+
+.upload-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #f09433, #dc2743, #bc1888);
+  transition: width 0.2s ease;
+}
+
+/* ── BODY ── */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body::-webkit-scrollbar { width: 4px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+/* ── STEP 1: UPLOAD ZONE ── */
+.upload-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  cursor: pointer;
+  gap: 12px;
+  border: 2px dashed #2e2e2e;
+  margin: 20px;
+  border-radius: 16px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-zone:hover {
+  border-color: #444;
+  background: rgba(255,255,255,0.02);
+}
+
+.upload-icon {
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.upload-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ccc;
+  margin: 0;
+  text-align: center;
+}
+
+.upload-btn {
+  background: #3a3a3a;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.upload-btn:hover {
+  background: #444;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #555;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── STEP 2: PREVIEW ── */
+.preview-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.preview-media {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #111;
+  display: block;
+}
+
+.preview-change-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 8px 20px;
+  color: #ccc;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.preview-change-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+/* ── STEP 3: CAPTION ── */
+.caption-zone {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  min-height: 320px;
+}
+
+.caption-left {
+  width: 200px;
+  flex-shrink: 0;
+  padding: 16px;
+}
+
+.caption-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #111;
+  display: block;
+}
+
+.caption-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 16px 0;
+  gap: 10px;
+  border-left: 1px solid #252525;
+  min-width: 0;
+}
+
+.caption-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #ddd;
+  font-size: 14px;
+  resize: none;
+  line-height: 1.6;
+  placeholder-color: #555;
+  caret-color: #fff;
+  min-height: 140px;
+  padding: 0 16px;
+}
+
+.caption-input::placeholder {
+  color: #555;
+}
+
+.caption-count {
+  font-size: 11px;
+  color: #555;
+  text-align: right;
+  padding: 0 16px;
+}
+
+/* Location input */
+.location-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #252525;
+  padding: 10px 16px;
+}
+
+.location-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #ccc;
+  font-size: 13.5px;
+  caret-color: #fff;
+}
+
+.location-input::placeholder {
+  color: #555;
+}
+
+/* ── ERROR ── */
+.modal-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ff5555;
+  font-size: 13px;
+  padding: 10px 16px 14px;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .modal-container {
+    border-radius: 20px 20px 0 0;
+    max-height: 95vh;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .caption-zone {
+    flex-direction: column;
+  }
+
+  .caption-left {
+    width: 100%;
+    padding: 16px 16px 0;
+  }
+
+  .caption-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+
+  .caption-right {
+    border-left: none;
+    border-top: 1px solid #252525;
+    padding: 12px 16px;
+  }
+}

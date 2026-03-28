@@ -1,0 +1,303 @@
+/* ═══════════════════════════════════════════════
+   STORIES ROW — Instagram Top Circles
+   ═══════════════════════════════════════════════ */
+
+/* ── ROW ── */
+.stories-row-wrap {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 14px 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.stories-row {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.stories-row::-webkit-scrollbar { display: none; }
+
+/* ── STORY BUBBLE ── */
+.story-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 70px;
+  transition: transform 0.15s;
+}
+
+.story-bubble:hover { transform: scale(1.05); }
+
+/* Gradient ring */
+.story-avatar-ring {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.story-avatar-ring.no-ring {
+  background: #2a2a2a;
+}
+
+.story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #2a2a2a;
+  border: 2.5px solid #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+}
+
+.story-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Your story + button */
+.story-add-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: #4a9eff;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1a1a1a;
+  line-height: 1;
+}
+
+.story-username {
+  font-size: 11.5px;
+  color: #aaa;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* ── SKELETON ── */
+.story-skel-ring {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  padding: 2.5px;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.story-skel-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #333;
+  border: 2.5px solid #1a1a1a;
+}
+
+.story-skel-name {
+  width: 44px;
+  height: 9px;
+  background: #2a2a2a;
+  border-radius: 5px;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ══════════════════════════════════════════════
+   STORY VIEWER
+   ══════════════════════════════════════════════ */
+
+.sv-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sv-fade 0.2s ease;
+}
+
+@keyframes sv-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sv-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: #111;
+}
+
+/* Progress bars */
+.sv-progress-row {
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  gap: 3px;
+  z-index: 10;
+}
+
+.sv-progress-track {
+  flex: 1;
+  height: 2.5px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sv-progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width 0.05s linear;
+}
+
+/* Author header */
+.sv-header {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 0;
+  z-index: 10;
+}
+
+.sv-author-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f09433, #dc2743);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.4);
+}
+
+.sv-author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sv-author-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sv-author-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.sv-story-time {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+
+.sv-close {
+  background: rgba(0,0,0,0.35);
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.sv-close:hover { background: rgba(0,0,0,0.55); }
+
+/* Media */
+.sv-media-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sv-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Tap zones */
+.sv-tap-left,
+.sv-tap-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.sv-tap-left  { left: 0; }
+.sv-tap-right { right: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .stories-row-wrap {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 12px;
+  }
+
+  .sv-container {
+    max-width: 100%;
+  }
+}
