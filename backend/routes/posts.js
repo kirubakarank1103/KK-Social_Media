@@ -1,33 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Post = require('../models/Post');
 const User = require('../models/User');
 const protect = require('../middleware/auth');
 
-// ✅ Storage config
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+// ✅ Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ✅ File filter — image + video both allow
-const fileFilter = (req, file, cb) => {
-  const imageTypes = /jpeg|jpg|png|gif|webp/;
-  const videoTypes = /mp4|mov|avi|mkv|webm/;
-  const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
-  if (imageTypes.test(ext) || videoTypes.test(ext)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only images and videos are allowed!'), false);
-  }
-};
+// ✅ Multer — Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    const isVideo = file.mimetype.startsWith('video/');
+    return {
+      folder: 'kk-social',
+      resource_type: isVideo ? 'video' : 'image',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'webm'],
+    };
+  },
+});
 
 const upload = multer({
   storage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
-  fileFilter
 });
 
 // ─── GET /api/posts/feed ───────────────────────────────────────
@@ -68,21 +70,21 @@ router.post('/', protect, upload.single('media'), async (req, res) => {
       return res.status(400).json({ message: 'Post must have a caption or media' });
     }
 
-    // ✅ Detect mediaType from mimetype
     let mediaUrl  = null;
     let mediaType = 'image';
 
     if (req.file) {
-      mediaUrl  = `/uploads/${req.file.filename}`;
+      // ✅ Cloudinary URL — permanent!
+      mediaUrl  = req.file.path;
       mediaType = req.file.mimetype.startsWith('video/') ? 'video' : 'image';
     }
 
     const post = await Post.create({
-      author:    req.user._id,
-      caption:   caption || '',
-      image:     mediaUrl,
-      mediaType,            // ✅ Save mediaType
-      location:  location || ''
+      author:   req.user._id,
+      caption:  caption || '',
+      image:    mediaUrl,
+      mediaType,
+      location: location || ''
     });
 
     await post.populate('author', 'username fullName profilePicture isVerified');
@@ -136,6 +138,11 @@ router.delete('/:id', protect, async (req, res) => {
     if (!post) return res.status(404).json({ message: 'Post not found' });
     if (post.author.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
+    }
+    // ✅ Delete from Cloudinary too
+    if (post.image) {
+      const publicId = post.image.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`kk-social/${publicId}`).catch(() => {});
     }
     await post.deleteOne();
     res.json({ message: 'Post deleted' });
