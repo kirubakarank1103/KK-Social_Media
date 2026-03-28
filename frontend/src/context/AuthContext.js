@@ -3,12 +3,16 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
+// ✅ FIX: Always use full API URL
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN_SUCCESS':
     case 'SIGNUP_SUCCESS':
       localStorage.setItem('token', action.payload.token);
       localStorage.setItem('user', JSON.stringify(action.payload.user));
+      axios.defaults.headers.common['Authorization'] = `Bearer ${action.payload.token}`;
       return {
         ...state,
         isAuthenticated: true,
@@ -19,6 +23,7 @@ const authReducer = (state, action) => {
     case 'LOGOUT':
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      delete axios.defaults.headers.common['Authorization'];
       return {
         ...state,
         isAuthenticated: false,
@@ -34,6 +39,7 @@ const authReducer = (state, action) => {
     case 'AUTH_ERROR':
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      delete axios.defaults.headers.common['Authorization'];
       return { ...state, isAuthenticated: false, user: null, token: null, loading: false };
     default:
       return state;
@@ -66,7 +72,8 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          const res = await axios.get('/api/auth/me');
+          // ✅ FIX: Use full API URL instead of relative '/api/auth/me'
+          const res = await axios.get(`${API}/auth/me`);
           dispatch({
             type: 'LOGIN_SUCCESS',
             payload: { token, user: res.data.user }
@@ -82,13 +89,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signup = async (userData) => {
-    const res = await axios.post('/api/auth/signup', userData);
+    const res = await axios.post(`${API}/auth/signup`, userData);
     dispatch({ type: 'SIGNUP_SUCCESS', payload: res.data });
     return res.data;
   };
 
   const login = async (credentials) => {
-    const res = await axios.post('/api/auth/login', credentials);
+    const res = await axios.post(`${API}/auth/login`, credentials);
     dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
     return res.data;
   };
