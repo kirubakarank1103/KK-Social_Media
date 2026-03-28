@@ -8,6 +8,10 @@
   padding: 16px 0 80px;
   min-height: 100vh;
   position: relative;
+  /* ✅ FIX: Mobile overflow fix */
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* ── CREATE BAR ── */
@@ -22,6 +26,9 @@
   margin: 0 0 20px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
+  /* ✅ FIX: prevent overflow */
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .create-bar:hover {
@@ -178,6 +185,9 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  /* ✅ FIX: prevent overflow */
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* ── EMPTY FEED ── */
@@ -273,6 +283,9 @@
 @media (max-width: 600px) {
   .home-page {
     padding: 12px 0 80px;
+    /* ✅ FIX: Full width on mobile */
+    max-width: 100%;
+    width: 100%;
   }
 
   .create-bar {

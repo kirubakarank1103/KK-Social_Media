@@ -5,7 +5,7 @@ import './CreatePostModal.css';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export default function CreatePostModal({ onClose, onCreated }) {
-  const [step, setStep] = useState('select'); // select | preview | caption
+  const [step, setStep] = useState('select');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isVideo, setIsVideo] = useState(false);
@@ -24,7 +24,6 @@ export default function CreatePostModal({ onClose, onCreated }) {
       setError('Only images or videos allowed!');
       return;
     }
-    // 50MB limit check
     if (selectedFile.size > 50 * 1024 * 1024) {
       setError('File too large! Max 50MB allowed.');
       return;
@@ -48,26 +47,33 @@ export default function CreatePostModal({ onClose, onCreated }) {
     setLoading(true);
     setError('');
     setProgress(0);
+
     try {
       const formData = new FormData();
-      // ✅ FIX: field name must match backend upload.single('media')
       formData.append('media', file);
       formData.append('caption', caption);
       if (location.trim()) formData.append('location', location.trim());
 
       const res = await axios.post(`${API}/posts`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-        // ✅ Upload progress tracking
         onUploadProgress: (e) => {
           const pct = Math.round((e.loaded * 100) / e.total);
           setProgress(pct);
         },
       });
-      onCreated(res.data);
+
       onClose();
+      if (typeof onCreated === 'function') {
+        onCreated(res.data);
+      }
+
     } catch (err) {
       console.error('Post error:', err);
-      setError(err.response?.data?.message || 'Failed to post. Try again.');
+      if (err.response) {
+        setError(err.response?.data?.message || 'Failed to post. Try again.');
+      } else if (err.request) {
+        setError('Network error. Check your connection.');
+      }
     } finally {
       setLoading(false);
       setProgress(0);
@@ -90,7 +96,6 @@ export default function CreatePostModal({ onClose, onCreated }) {
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div className="modal-container">
 
-        {/* ── HEADER ── */}
         <div className="modal-header">
           {step !== 'select' && (
             <button
@@ -136,17 +141,14 @@ export default function CreatePostModal({ onClose, onCreated }) {
           </div>
         </div>
 
-        {/* ── UPLOAD PROGRESS BAR ── */}
         {loading && (
           <div className="upload-progress-wrap">
             <div className="upload-progress-bar" style={{ width: `${progress}%` }} />
           </div>
         )}
 
-        {/* ── BODY ── */}
         <div className="modal-body">
 
-          {/* STEP 1: Select file */}
           {step === 'select' && (
             <div
               className="upload-zone"
@@ -179,7 +181,6 @@ export default function CreatePostModal({ onClose, onCreated }) {
             </div>
           )}
 
-          {/* STEP 2: Preview */}
           {step === 'preview' && preview && (
             <div className="preview-zone">
               {isVideo ? (
@@ -199,7 +200,6 @@ export default function CreatePostModal({ onClose, onCreated }) {
             </div>
           )}
 
-          {/* STEP 3: Caption + Location */}
           {step === 'caption' && (
             <div className="caption-zone">
               <div className="caption-left">
@@ -237,7 +237,6 @@ export default function CreatePostModal({ onClose, onCreated }) {
             </div>
           )}
 
-          {/* Error */}
           {error && (
             <div className="modal-error">
               <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">

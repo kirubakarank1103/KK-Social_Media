@@ -236,7 +236,15 @@ export default function PostCard({ post, onUpdate }) {
                 </div>
               </div>
             ) : (
-              <img src={post.image} alt={post.caption || 'post'} className="post-media" loading="lazy" />
+              <img 
+  src={post.image?.includes('cloudinary') 
+    ? post.image.replace('/upload/', '/upload/f_auto,q_auto,w_800/') 
+    : post.image} 
+  alt={post.caption || 'post'} 
+  className="post-media" 
+  loading="lazy"
+  decoding="async"
+/>
             )}
           </div>
         )}
