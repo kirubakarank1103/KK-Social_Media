@@ -73,10 +73,15 @@ router.post('/', protect, upload.single('media'), async (req, res) => {
     let mediaUrl  = null;
     let mediaType = 'image';
 
-    if (req.file) {
-      // ✅ Cloudinary URL — permanent!
-      mediaUrl  = req.file.path;
-      mediaType = req.file.mimetype.startsWith('video/') ? 'video' : 'image';
+     if (req.file) {
+      const isVid = req.file.mimetype.startsWith('video/');
+      mediaType = isVid ? 'video' : 'image';
+      // ✅ Cloudinary auto optimize URL
+      if (!isVid) {
+        mediaUrl = req.file.path.replace('/upload/', '/upload/f_auto,q_auto,w_1080/');
+      } else {
+        mediaUrl = req.file.path;
+      }
     }
 
     const post = await Post.create({
