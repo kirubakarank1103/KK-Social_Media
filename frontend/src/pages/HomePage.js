@@ -42,8 +42,11 @@ export default function HomePage() {
   }, [fetchFeed]);
 
   const handlePostCreated = (newPost) => {
-    setPosts((prev) => [newPost, ...prev]);
-    setShowModal(false);
+    if (newPost) {
+      setPosts((prev) => [newPost, ...prev]);
+    } else {
+      fetchFeed(true);
+    }
   };
 
   const handleUpdate = () => fetchFeed(false);
