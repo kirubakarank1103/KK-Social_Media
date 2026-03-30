@@ -7,28 +7,25 @@ const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export default function StoriesRow() {
   const { user } = useAuth();
-  const [stories, setStories] = useState([]);   // grouped by user
+  const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewing, setViewing] = useState(null); // { userStories, index }
+  const [viewing, setViewing] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
   const timerRef = useRef();
   const scrollRef = useRef();
+  const fileRef = useRef();
 
-  useEffect(() => {
-    fetchStories();
-  }, []);
+  useEffect(() => { fetchStories(); }, []);
 
   const fetchStories = async () => {
     try {
       const res = await axios.get(`${API}/stories`);
-      // Group stories by author
       const grouped = {};
       res.data.forEach((s) => {
         const uid = s.author?._id;
         if (!uid) return;
-        if (!grouped[uid]) {
-          grouped[uid] = { author: s.author, stories: [] };
-        }
+        if (!grouped[uid]) grouped[uid] = { author: s.author, stories: [] };
         grouped[uid].stories.push(s);
       });
       setStories(Object.values(grouped));
@@ -39,7 +36,29 @@ export default function StoriesRow() {
     }
   };
 
-  // ── VIEWER LOGIC ──
+  const handleYourStoryClick = () => {
+    fileRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('media', file);
+      await axios.post(`${API}/stories`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      await fetchStories();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const openStory = (groupIndex) => {
     setViewing({ groupIndex, storyIndex: 0 });
     setProgress(0);
@@ -77,7 +96,6 @@ export default function StoriesRow() {
     }
   };
 
-  // Auto-advance progress bar (5s per story)
   useEffect(() => {
     if (!viewing) return;
     clearInterval(timerRef.current);
@@ -97,56 +115,44 @@ export default function StoriesRow() {
   }, [viewing]);
 
   if (loading) return <StoriesSkeleton />;
-  if (stories.length === 0) return (
-  <div className="stories-row-wrap">
-    <div className="stories-row">
-      <div className="story-bubble your-story" onClick={() => {}}>
-        <div className="story-avatar-ring no-ring">
-          <div className="story-avatar">
-            {user?.profilePicture ? (
-              <img src={user.profilePicture} alt={user.username} />
-            ) : (
-              <span>{user?.username?.[0]?.toUpperCase()}</span>
-            )}
-            <div className="story-add-btn">+</div>
-          </div>
-        </div>
-        <span className="story-username">Your story</span>
-      </div>
-    </div>
-  </div>
-);
 
-  const currentGroup   = viewing ? stories[viewing.groupIndex] : null;
-  const currentStory   = currentGroup?.stories[viewing?.storyIndex];
+  const currentGroup = viewing ? stories[viewing.groupIndex] : null;
+  const currentStory = currentGroup?.stories[viewing?.storyIndex];
   const isCurrentVideo = currentStory?.mediaType === 'video' ||
     (currentStory?.mediaUrl && (
       currentStory.mediaUrl.endsWith('.mp4') ||
       currentStory.mediaUrl.endsWith('.webm')
     ));
 
+  const YourStoryBubble = () => (
+    <div className="story-bubble your-story" onClick={handleYourStoryClick}>
+      <div className="story-avatar-ring no-ring">
+        <div className="story-avatar">
+          {user?.profilePicture ? (
+            <img src={user.profilePicture} alt={user.username} />
+          ) : (
+            <span>{user?.username?.[0]?.toUpperCase()}</span>
+          )}
+          <div className="story-add-btn">{uploading ? '…' : '+'}</div>
+        </div>
+      </div>
+      <span className="story-username">Your story</span>
+    </div>
+  );
+
   return (
     <>
-      {/* ── STORIES ROW ── */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*,video/*"
+        hidden
+        onChange={handleFileChange}
+      />
+
       <div className="stories-row-wrap">
         <div className="stories-row" ref={scrollRef}>
-
-          {/* Your story bubble */}
-          <div className="story-bubble your-story" onClick={() => {}}>
-            <div className="story-avatar-ring no-ring">
-              <div className="story-avatar">
-                {user?.profilePicture ? (
-                  <img src={user.profilePicture} alt={user.username} />
-                ) : (
-                  <span>{user?.username?.[0]?.toUpperCase()}</span>
-                )}
-                <div className="story-add-btn">+</div>
-              </div>
-            </div>
-            <span className="story-username">Your story</span>
-          </div>
-
-          {/* Other stories */}
+          <YourStoryBubble />
           {stories.map((group, i) => (
             <div
               key={group.author._id}
@@ -168,30 +174,23 @@ export default function StoriesRow() {
         </div>
       </div>
 
-      {/* ── STORY VIEWER ── */}
       {viewing && currentStory && (
         <div className="sv-backdrop" onClick={closeViewer}>
           <div className="sv-container" onClick={(e) => e.stopPropagation()}>
-
-            {/* Progress bars */}
             <div className="sv-progress-row">
               {currentGroup.stories.map((_, i) => (
                 <div key={i} className="sv-progress-track">
                   <div
                     className="sv-progress-fill"
                     style={{
-                      width: i < viewing.storyIndex
-                        ? '100%'
-                        : i === viewing.storyIndex
-                        ? `${progress}%`
+                      width: i < viewing.storyIndex ? '100%'
+                        : i === viewing.storyIndex ? `${progress}%`
                         : '0%'
                     }}
                   />
                 </div>
               ))}
             </div>
-
-            {/* Author header */}
             <div className="sv-header">
               <div className="sv-author-avatar">
                 {currentGroup.author.profilePicture ? (
@@ -213,18 +212,13 @@ export default function StoriesRow() {
                 </svg>
               </button>
             </div>
-
-            {/* Media */}
             <div className="sv-media-wrap">
               {isCurrentVideo ? (
                 <video
                   key={currentStory._id}
                   src={currentStory.mediaUrl}
                   className="sv-media"
-                  autoPlay
-                  playsInline
-                  muted
-                  loop
+                  autoPlay playsInline muted loop
                 />
               ) : (
                 <img
@@ -235,9 +229,7 @@ export default function StoriesRow() {
                 />
               )}
             </div>
-
-            {/* Tap zones */}
-            <div className="sv-tap-left"  onClick={prevStory} />
+            <div className="sv-tap-left" onClick={prevStory} />
             <div className="sv-tap-right" onClick={nextStory} />
           </div>
         </div>
