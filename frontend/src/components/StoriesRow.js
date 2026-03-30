@@ -97,7 +97,25 @@ export default function StoriesRow() {
   }, [viewing]);
 
   if (loading) return <StoriesSkeleton />;
-  if (stories.length === 0) return null;
+  if (stories.length === 0) return (
+  <div className="stories-row-wrap">
+    <div className="stories-row">
+      <div className="story-bubble your-story" onClick={() => {}}>
+        <div className="story-avatar-ring no-ring">
+          <div className="story-avatar">
+            {user?.profilePicture ? (
+              <img src={user.profilePicture} alt={user.username} />
+            ) : (
+              <span>{user?.username?.[0]?.toUpperCase()}</span>
+            )}
+            <div className="story-add-btn">+</div>
+          </div>
+        </div>
+        <span className="story-username">Your story</span>
+      </div>
+    </div>
+  </div>
+);
 
   const currentGroup   = viewing ? stories[viewing.groupIndex] : null;
   const currentStory   = currentGroup?.stories[viewing?.storyIndex];
